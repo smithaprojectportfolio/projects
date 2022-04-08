@@ -1,5 +1,13 @@
+/*
+Please go through the csv file containing the dataset and the project objective document for more context on the queries below
+
 USE [datasets]
 GO
+
+/* 
+As a first step, import the csv file containing the data set into an SQL table "superstore". Once the import is successful,
+run a select query on the table to ensure the csv dataset has been imported into the table
+*/
 
 SELECT [RowID]
       ,[OrderID]
@@ -26,43 +34,35 @@ SELECT [RowID]
 
 GO
 
+-- Query 1 : Determine the available shipping modes for the order delivery
 
---sHIPPING MODES
 select distinct ShipMode
-from Superstore
+from dbo.Superstore
 
 
-select [ProductID],customerid, count(*)
+-- Query 2 : Identify the key columns of the data set. Group the data by orderid and productid and determine if the combinations repeat.
+-- Query 3 : Check if there are duplicate records for the key columns. If yes, clean up the data set by remove duplicate rows for the key columns
+
+select [Orderid], [ProductID], count(*)
 from superstore
-group by  [ProductID], customerid
+group by  [Orderid], [ProductID]
 having count(*)>1
 
-select * 
-from superstore
-where productid= 'FUR-BO-10000330'
-
-
---surrogate key,ganularity
---customerid doesnt make sense
---always orderid,productid is mandate(2 columns together make a primary key and its called composite key)
-select [Orderid], productid,count(*)
-from superstore
-group by   [Orderid],ProductID
-having count(*)>1
+/*
+Observation: Order id and product id seems to be the potential key columns, however, the query has returned duplicates for few order ids and product ids. 
+Further analysis required to see the cause for the duplicates
+*/
 
 select * 
 from superstore
 where productid= 'FUR-FU-10003664' and orderID = 'CA-2016-137043'
 
-SELECT *
-    FROM superstore
-    WHERE RowID NOT IN
-    (
-        SELECT MAX(rowID)
-        FROM superstore
-        GROUP BY [OrderID], 
-                 [ProductID]          
-    )
+/*
+Observation: Looks like there are more than one records for the selected orderid and product id, however, all the column values are same which implies the data
+is just duplicated and should be cleaned up
+*/
+
+
 --Removing duplicates from key columns
 	DELETE FROM superstore
     WHERE RowID NOT IN
@@ -73,57 +73,28 @@ SELECT *
                  [ProductID]          
     )
 
---alternative to remove duplicates - select clean records using CTE
 
-with superstorederived
-as
-(
-select * From superstore_copy where rowid in 
-(select min(rowid) from superstore_copy group by orderid,productid)
-)
-select * From superstorederived
+-- Query 4 : Identify the states with the highest profits
 
---alternative to remove duplicates - select clean records using temp table
-drop table if exists #superstorederived
-select
-*
-into #superstorederived
-From superstore_copy where rowid in 
-(select min(rowid) from superstore_copy group by orderid,productid)
-
-select * From #superstorederived
-
---different shipping mode used in the super store
-select distinct shipmode 
-from
-superstore
-
---Identify the state with the highest profits
 select state,country, sum(profit) TotalProfit from superstore
 group by State, country
 order by sum(profit) desc
 
---Total sales for each state
+-- Query 5 : Total sales for each state
 select State , sum(sales) TotalSales
 from superstore
 group by state
 order by sum(sales) desc
 
 
---Top 10 sub-categories with most sales (identify the category the sub-category belongs to)
-select top 10 * from
-(select  SubCategory, sum(sales) TotalSale
-from superstore 
-Group by SubCategory
-) A
-order by TotalSale desc
+--Query 6 : Top 10 sub-categories with highest sales
 
+select  Top 10 subcategory, sum(sales) TotalSale
+from dbo.superstore
+Group by subcategory
+order by sum(sales) desc
 
-select  Top 10 SubCategory, sum(sales) TotalSale
-from superstore
-Group by SubCategory
-order by TotalSale desc
-
+-- Alternatively, can use rank function to select top 10 subcategory by total sales
 select * from (select  subcategory, sum(sales) TotalSale , 
 	rank() over ( order by sum(sales)desc) rn
 from superstore
@@ -131,12 +102,7 @@ group by SubCategory) A
 where rn<=10
 
 
---Average shipping days by state
-select State from (SELECT
- DATEDIFF(Day, orderdate, ShipDate) AS shippingdates, *
-FROM superstore)A
-Group by State
- 
+--Query 7 : Average days it takes to ship a product for each state
 
 SELECT
 State,AVG( DATEDIFF(Day, orderdate, ShipDate)) AS Avg_shippingdays
@@ -145,22 +111,7 @@ group by State
 order by Avg_shippingdays asc
 
 
-Select State, avg(shippingdays) as avg_shippingdays from 
-(
-SELECT
-State,DATEDIFF(Day, orderdate, ShipDate) AS shippingdays
-FROM superstore ) A
-group by State
-
-
-
---identify the states which have the quickest shipping
-
-	SELECT
-	top 23 State,AVG( DATEDIFF(Day, orderdate, ShipDate)) AS Avg_shippingdays, 
-	rank () over (order by AVG( DATEDIFF(Day, orderdate, ShipDate))) as rnk
-	FROM superstore  
-	group by State
+--Query 8 : Identify the states which have the quickest shipping
 
 	SELECT
 	 State,AVG( DATEDIFF(Day, orderdate, ShipDate)) AS Avg_shippingdays, 
@@ -168,6 +119,3 @@ group by State
 	FROM superstore  
 	group by State
 
-
---copy dataset
-select * into superstore_clean from superstore
