@@ -3,6 +3,10 @@
 As part of this project, I have analysed the sales of a reputed superstore in USA and derived meaningful insights in-order to understand the strengths & weaknesses 
 of the business. This document covers an overview of the dataset utilized and the various analytical insights that will be derived from it.
 
+* The project folder contains the following:
+    * Datasets_Superstore.csv - A csv file containing the sales data of the superstore
+    * Scripts_SuperstoreSales.sql - A sql script that contains queries to derive insights
+
 # Dataset Overview
 
 It is critical to understand the column descriptions and the structure of dataset prior to deriving any insights.
