@@ -42,7 +42,7 @@ Profit     |      Profit/Loss incurred.
 
 * The available shipping modes for the order delivery
 * Identity the key columns in the data set
-* Check if there are duplicate records for the key columns. If yes, clean up the data set by remove duplicate rows for the key columns
+* Check if there are duplicate records for the key columns. If yes, clean up the data set by removing duplicate rows for the key columns
 * Identify the top performing states with respect to the profits
 * Total sales for each state
 * Which sub-categories have the most sales
