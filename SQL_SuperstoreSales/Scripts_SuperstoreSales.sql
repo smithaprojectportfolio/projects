@@ -1,5 +1,6 @@
 /*
 Please go through the csv file containing the dataset and the project objective document for more context on the queries below
+*/
 
 USE [datasets]
 GO
