@@ -6,6 +6,7 @@ of the business. This document covers an overview of the dataset utilized and th
 * The project folder contains the following:
     * Datasets_Superstore.csv - A csv file containing the sales data of the superstore
     * Scripts_SuperstoreSales.sql - A sql script that contains queries to derive insights
+> **Note: In this project, I have demonstrated my familiarity in the following: Distinct, Order By, Group By, Aggregation functions, Window functions, Date functions, Common Table Expressions (CTE)**
 
 # Dataset Overview
 
