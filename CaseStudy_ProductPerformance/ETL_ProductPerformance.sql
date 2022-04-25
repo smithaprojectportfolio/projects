@@ -55,7 +55,7 @@ Group by F.CustomerKey
 
 -- Determine customer attributes
 	Drop table if exists STG_CustomerSales
-select A.*,  firstName+' '+' '+MiddleName+' '+' '+LastName as CustName,EmailAddress
+select A.*,  isnull(firstName,'') +' '+' '+isnull(MiddleName,'') +' '+' '+isnull(LastName,'') as CustName,EmailAddress
 into STG_CustomerSales
 From #temp_salesamountusd_Cust A inner join DimCustomer DC
 	ON A.Customerkey = DC.CustomerKey
